@@ -3,13 +3,11 @@ title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
-  - ruby
-  - python
-  - javascript
+  - PHP
+
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/lord/slate'>Documentation Powered by Slate</a>
+  - <a href='https://github.com/lord/slate'>Powered by Designvox</a>
 
 includes:
   - errors
@@ -19,26 +17,22 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+## API Reference
 
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+The SpringHill API is organized around REST. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors. We use built-in HTTP features, like HTTP authentication and HTTP verbs, which are understood by off-the-shelf HTTP clients. We support cross-origin resource sharing, allowing you to interact securely with our API from a client-side web application (though you should never expose your secret API key in any public website's client-side code). JSON is returned by all API responses, including errors, although our API libraries convert responses to appropriate language-specific objects.
 
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
+To make the API as explorable as possible, accounts have test mode and live mode API keys. There is no "switch" for changing between modes, just use the appropriate key to perform a live or test transaction. Requests made with test mode credentials never hit the banking networks and incur no cost.
+
+Be sure to subscribe to SpringHill's API announce mailing list to receive information on new additions and changes to SpringHill's API and language libraries.
 
 # Authentication
 
 > To authorize, use this code:
 
-```ruby
-require 'kittn'
+```PHP
+require 'springhill'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
+api = SpringHill::APIClient.authorize!('sk_test_4eC39HqLyjWDarjtT1zdp7dc')
 ```
 
 ```shell
@@ -46,194 +40,132 @@ api = kittn.authorize('meowmeowmeow')
 curl "api_endpoint_here"
   -H "Authorization: meowmeowmeow"
 ```
+> Make sure to replace `sk_test_4eC39HqLyjWDarjtT1zdp7dc` with your API key.
 
-```javascript
-const kittn = require('kittn');
+SpringHill uses API keys to allow access to the API. You can register a new SpringHill API key at our [developer portal](http://example.com/developers).
 
-let api = kittn.authorize('meowmeowmeow');
-```
+SpringHill expects for the API key to be included in all API requests to the server in a header that looks like the following:
 
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+`Authorization: sk_test_4eC39HqLyjWDarjtT1zdp7dc`
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+You must replace <code>sk_test_4eC39HqLyjWDarjtT1zdp7dc</code> with your personal API key.
 </aside>
 
-# Kittens
+# Registration
 
-## Get All Kittens
+## Register Individuals
 
-```ruby
-require 'kittn'
+```php
+\SpringHill\SpringHill::setApiKey("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
+\SpringHill\RegisterIndividual::create(array(
+  "name" => "Test",
+  "last_name" => "TestUser",
+  "birth_date" => "9/30/1970"
+));
 ```
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+curl https://api.stripe.com/v1/registerindividual \
+   -u sk_test_4eC39HqLyjWDarjtT1zdp7dc: \
+   -d name=Test \
+   -d last_name=TestUser \
+   -d birth_date="9/30/1970"
 ```
 
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
+> The above command returns JSON response structured like this:
 
 ```json
 [
   {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
+    "code":200,
+    "status": "Individual created successfuly"
+  }
   {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
+    "id": 1,
+    "name": "Test",
+    "last_name": "TestUser",
+    "birth_date": 9/30/1970,
+    "entity_id": 9930
   }
 ]
 ```
 
-This endpoint retrieves all kittens.
+This endpoint retrieves all Individuals.
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`GET http://api.springhill.com/api/createindividuals`
 
 ### Query Parameters
 
 Parameter | Default | Description
 --------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+name | string | Name of the Individual
+last_name | string | Last Name of the Individual
+birth_date | date | Birth Date of Individuale
 
 <aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+Remember — a happy individual is an authenticated individual!
 </aside>
 
-## Get a Specific Kitten
+## Get a Specific Individual
 
-```ruby
-require 'kittn'
+```php
+require 'springhill'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
+\SpringHill\SpringHill::setApiKey("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
 
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
+\SpringHill\Individual::retrieve("9930");
 ```
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
+curl https://api.springhill.com/v1/individual/9930 \
+   -u sk_test_4eC39HqLyjWDarjtT1zdp7dc:
 ```
 
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
+> The above command returns JSON response structured like this:
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "id": 1,
+  "name": "Test",
+  "last_name": "TestUser",
+  "birth_date": 9/30/1970,
+  "entity_id": 9930
 }
 ```
 
-This endpoint retrieves a specific kitten.
+This endpoint retrieves a specific individual.
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`GET https://api.springhill.com/v1/individual/9930`
 
 ### URL Parameters
 
 Parameter | Description
 --------- | -----------
-ID | The ID of the kitten to retrieve
+entity_id | The entity ID of the individual to retrieve
 
-## Delete a Specific Kitten
 
-```ruby
-require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
+# People Management
 
-```python
-import kittn
+# Groups + Housing
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+# Scheduling + Attendance
 
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
+# Transportation
 
-```javascript
-const kittn = require('kittn');
+# Check-in + Check-out
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
+# Staffing + Resourcing
 
-> The above command returns JSON structured like this:
+# My Dashboard (Staff)
 
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
+# Health Center
 
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
-
+# Analytics and Reporting
